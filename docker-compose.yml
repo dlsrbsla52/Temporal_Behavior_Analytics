@@ -1,0 +1,30 @@
+# docker-compose 파일 버전 정의
+version: '3.8'
+
+services:
+  db:
+    # Docker 이미지
+    image: postgres:14
+    
+    # 컨테이너의 이름
+    container_name: pg14_compose_container
+    
+    # 환경 변수 설정
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: mydatabase
+      TZ: Asia/Seoul
+    
+    # 포트 매핑 (호스트:컨테이너)
+    ports:
+      - "5432:5432"
+    
+    volumes:
+      - pg14_compose_data:/var/lib/postgresql/data
+    
+    restart: always
+
+# 이 docker-compose 파일에서 사용할 볼륨 정의
+volumes:
+  pg14_compose_data:
