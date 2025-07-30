@@ -20,11 +20,17 @@ import java.util.List;
 public class TrackingController {
     
     private final TrackingService trackingService;
-    
-    @Operation(summary = "요일별 사용자 행동 통계", description = "주간 활성 이용자")
-    @GetMapping(value = "/activeUsers/wau")
+
+    @Operation(summary = "요일별 사용자 행동 통계 로우 데이터", description = "주간 활성 이용자")
+    @GetMapping(value = "/activeUsers/wau/")
     public ApiResultResponse<List<ActiveUserVo>> wau() {
         return trackingService.trackingByWau();
+    }
+
+    @Operation(summary = "요일별 사용자 행동 통계 로우 데이터", description = "주간 활성 이용자")
+    @GetMapping(value = "/activeUsers/wau/row")
+    public ApiResultResponse<List<ActiveUserVo>> wauRow() {
+        return trackingService.trackingByWauRowData();
     }
 
     @Operation(summary = "요일별 사용자 행동 통계", description = "주간 활성 이용자 날짜 기준 데이터 집계")
@@ -32,7 +38,7 @@ public class TrackingController {
     public ApiResultResponse<List<ActiveUserVo>> wauByDate(
             @PathVariable(name = "startDay") String startDay
     ) {
-        return trackingService.trackingByWau();
+        return trackingService.trackingByWauRowData();
     }
 
     @Operation(summary = "요일별 사용자 행동 통계", description = "주간 활성 이용자 날짜 기준 데이터 집계")
@@ -41,7 +47,7 @@ public class TrackingController {
             @PathVariable(name = "startDate") String startDay,
             @PathVariable(name = "endDate") String endDate
     ) {
-        return trackingService.trackingByWau();
+        return trackingService.trackingByWauRowData();
     }
     
     @Operation(summary = "요일별 사용자 행동 통계", description = "주간 활성 이용자")
@@ -49,7 +55,7 @@ public class TrackingController {
     public ApiResultResponse<List<ActiveUserVo>> wauByUserId(
             @PathVariable(name = "userId") Long userId
     ) {
-        return trackingService.trackingByWau();
+        return trackingService.trackingByWauRowData();
     }
     
 }

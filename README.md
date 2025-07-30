@@ -12,6 +12,8 @@
 # DB 설정
 ## 테이블 생성
 ```postgresql
+create schema test;
+
 create table test.action_history
 (
 id            bigserial primary key, -- 기본 키 추가
@@ -23,82 +25,22 @@ action_value  double precision,
 action_time   timestamp   not null
 );
 
-create table user_last_action
+create table test.user_last_action
 (
-    user_id          bigint default nextval('test.user_last_action_id_seq'::regclass) not null
-        primary key,
+    user_id          bigint not null primary key,
     last_action_time timestamp                                                        not null
 );
 ```
 
-### 1. action_history 테이블 시퀀스 생성
-```postgresql
-CREATE SEQUENCE test.action_history_user_id_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
-```
-
-### 2. 시퀀스 소유자 설정
-```postgresql
-ALTER SEQUENCE test.action_history_user_id_seq OWNER TO postgres;
-```
-
-### 3. 테이블 컬럼에 시퀀스 기본값 적용
-```postgresql
-ALTER TABLE test.action_history
-ALTER COLUMN id SET DEFAULT nextval('test.action_history_user_id_seq');
-```
-
-### 4. 시퀀스와 테이블 컬럼 연결
-```postgresql
-ALTER SEQUENCE test.action_history_user_id_seq OWNED BY test.action_history.id;
-```
-
-
-### 1. user_last_action 테이블 시퀀스 생성
-```postgresql
-CREATE SEQUENCE test.user_last_action_id_seq
-START WITH 1
-INCREMENT BY 1
-NO MINVALUE
-NO MAXVALUE
-CACHE 1;
-```
-
-### 2. 시퀀스 소유자 설정
-```postgresql
-ALTER SEQUENCE test.user_last_action_id_seq OWNER TO postgres;
-```
-
-### 3. 테이블 컬럼에 시퀀스 기본값 적용
-```postgresql
-ALTER TABLE test.user_last_action
-ALTER COLUMN user_id SET DEFAULT nextval('test.user_last_action_id_seq');
-```
-
-### 4. 시퀀스와 테이블 컬럼 연결 (소유권 설정)
-```postgresql
-ALTER SEQUENCE test.user_last_action_id_seq OWNED BY test.user_last_action.user_id;
-```
-
 ## 인덱스 생성
+### 유저아이디, 시간대별 통계 쿼리를 위한 커버링 인데스
+```postgresql
+create index idx_user_id_and_last_action_time
+   on test.user_last_action (user_id, last_action_time);
+```
+
 ### 요일별, 시간대별 통계 쿼리를 위한 커버링 인덱스
 ```postgresql
-CREATE INDEX idx_action_history_time_type_user_count
-ON test.action_history (action_time, action_type, user_id, action_count);
-```
-
-### 특정 타겟 액션 사용자 필터링을 위한 커버링 인덱스
-```postgresql
-CREATE INDEX idx_action_history_target_time_user
-ON test.action_history (action_target, action_time, user_id);
-```
-
-### 최근 활동 사용자 필터링을 위한 인덱스
-```postgresql
-CREATE INDEX idx_user_last_action_time
-ON test.user_last_action (last_action_time);
+CREATE INDEX idx_ah_time_covering ON test.action_history (action_time, user_id)
+   INCLUDE (action_type, action_target, action_count, action_value);
 ```

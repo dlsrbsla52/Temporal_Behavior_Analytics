@@ -16,8 +16,8 @@ spring:
       data-source-properties:
         reWriteBatchedInserts: true
         reWriteBatchedStatements: true
-      connection-timeout: 5000
-      maximum-pool-size: 30
+      connection-timeout: 60000
+      maximum-pool-size: 50
       minimum-idle: 30
 
   jpa:
@@ -27,6 +27,7 @@ spring:
       hibernate:
         default_batch_fetch_size: 1000
         generate_statistics: true
+        format_sql: true
       order_inserts: true
       order_updates: true
       jdbc:
@@ -40,8 +41,9 @@ spring:
 
 logging:
   level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
     org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: OFF
-    com.zocbo.push.schedule.zocbo.client: DEBUG
   pattern:
     console: "%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd'T'HH:mm:ss.SSSXXX}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} [%X{request_id:----}]%m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
 

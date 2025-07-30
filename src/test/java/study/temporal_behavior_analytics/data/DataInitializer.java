@@ -1,14 +1,11 @@
 package study.temporal_behavior_analytics.data;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 import study.temporal_behavior_analytics.common.config.SnowflakeIdGenerator;
 
@@ -39,8 +36,8 @@ public class DataInitializer {
     private SnowflakeIdGenerator snowflakeIdGenerator;
 
     // ================== 데이터 생성 규칙 상수 ==================
-    private static final int USER_COUNT = 100_000;
-    private static final int THREAD_COUNT = 50; // 실행 환경에 따라 조절
+    private static final int USER_COUNT = 3_000_000;
+    private static final int THREAD_COUNT = 20; // 실행 환경에 따라 조절
     private static final int EXECUTE_COUNT = 200_000; // action_history 생성을 위한 외부 루프 횟수
     private static final int BULK_INSERT_SIZE = 2_000; // 한 번의 배치로 삽입할 레코드 수
     // 총 ActionHistory 레코드 수 = EXECUTE_COUNT * BULK_INSERT_SIZE = 4억
@@ -50,16 +47,13 @@ public class DataInitializer {
 
 
     /**
-     * ActionHistory 데이터를 생성하기 전, 부모 테이블인 UserLastAction 데이터를 먼저 초기화합니다.
-     * 외래 키 제약 조건을 만족시키기 위해 반드시 선행되어야 합니다.
+     * ActionHistory 데이터를 생성하기 전, 부모 테이블인 UserLastAction 초기화
      */
     @Test
     @Order(1)
-    @Transactional
-    @Commit
     // 테스트 결과를 실제 DB에 반영
     void initializeUserLastAction() {
-        System.out.println("Start initializing user_last_action table...");
+        System.out.println("=== 데이터 삽입 시작 ===");
         String sql = "INSERT INTO test.user_last_action (user_id, last_action_time) VALUES (?, ?)";
 
         List<Object[]> batchArgs = new ArrayList<>();
@@ -77,18 +71,17 @@ public class DataInitializer {
         if (!batchArgs.isEmpty()) {
             jdbcTemplate.batchUpdate(sql, batchArgs);
         }
-        System.out.println("Finished initializing user_last_action table.");
+        System.out.println("=== 데이터 삽입 완료 ===");
+
     }
 
     /**
-     * 멀티스레드를 사용하여 ActionHistory 데이터를 대량으로 생성합니다.
+     * 멀티스레드처리로 사용하여 ActionHistory 테스트 데이터 삽입
      */
     @Test
     @Order(2)
-    @Transactional
-    @Commit
     void initializeActionHistory() throws InterruptedException {
-        System.out.println("Start initializing action_history table...");
+        System.out.println("=== 데이터 삽입 시작 ===");
         CountDownLatch latch = new CountDownLatch(EXECUTE_COUNT);
         ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
 
@@ -99,12 +92,12 @@ public class DataInitializer {
                 try {
                     insertActionHistoryBatch();
                 } catch (Exception e) {
-                    log.info("Exception occurred while inserting action_history data: {}", e.getMessage());
+                    log.info("data: {}", e.toString());
                 } finally {
                     latch.countDown();
                     // 로그를 너무 많이 남기지 않도록 1000번에 한 번씩만 출력
                     if (latch.getCount() % 1000 == 0) {
-                        System.out.println("Remaining tasks: " + latch.getCount());
+                        System.out.println("남은 루프수 : " + latch.getCount());
                     }
                 }
             });
@@ -114,11 +107,12 @@ public class DataInitializer {
         executorService.shutdown();
 
         long endTime = System.currentTimeMillis();
-        System.out.println("Finished initializing action_history table. Total time: " + (endTime - startTime) + "ms");
+        System.out.println("=== 데이터 완료 시작 ===");
+        System.out.println("작업 시간 : " + (endTime - startTime) + "ms");
     }
 
     /**
-     * JDBC Batch Update를 사용하여 ActionHistory 데이터를 한 묶음(batch) 단위로 삽입.
+     * 대용량 삽입 처리
      */
     private void insertActionHistoryBatch() {
         String sql = 

@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 import study.temporal_behavior_analytics.user.tracking.code.TimeSlot;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @ToString
@@ -19,10 +21,20 @@ public class ActVo {
     
     @Schema(name = "액션(행위) 카운트")
     private Integer actionCount;
+
+    private LocalDateTime actionTime;
     
     @Schema(name = "액션(행위) 번호")
     private Double actionValue;
 
     @Schema(name = "액션(행위)")
     private TimeSlot timeSlot;
+
+    public ActVo(String actionType, String actionTarget, Integer actionCount, Double actionValue, LocalDateTime actionTime) {
+        this.actionType = actionType;
+        this.actionTarget = actionTarget;
+        this.actionCount = actionCount;
+        this.actionValue = actionValue;
+        this.actionTime = actionTime;
+    }
 }

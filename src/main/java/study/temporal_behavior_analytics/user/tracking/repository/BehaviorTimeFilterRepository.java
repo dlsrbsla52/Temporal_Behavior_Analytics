@@ -1,5 +1,6 @@
 package study.temporal_behavior_analytics.user.tracking.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,6 +10,7 @@ import study.temporal_behavior_analytics.user.tracking.code.TimeSlot;
 import study.temporal_behavior_analytics.user.tracking.vo.ActVo;
 import study.temporal_behavior_analytics.user.tracking.vo.ActiveUserVo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static study.temporal_behavior_analytics.user.tracking.entity.QActionHistory.actionHistory;
+import static study.temporal_behavior_analytics.user.tracking.entity.QUserLastAction.userLastAction;
 
 
 @Repository
@@ -24,25 +27,41 @@ public class BehaviorTimeFilterRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-
-    public List<ActiveUserVo> findActiveUsersWau() {
-        Map<Long, List<ActVo>> transform = jpaQueryFactory
+    public List<ActiveUserVo> findActiveUsersWauRowData() {
+        // 1. fetch()를 사용하여 데이터를 먼저 조회합니다.
+        List<Tuple> results = jpaQueryFactory
+                .select(
+                        actionHistory.userId,
+                        actionHistory.actionType,
+                        actionHistory.actionTarget,
+                        actionHistory.actionCount,
+                        actionHistory.actionValue,
+                        actionHistory.actionTime
+                )
                 .from(actionHistory)
-                // 여기에 where 조건 등을 추가할 수 있습니다.
-                .transform(groupBy(actionHistory.userId).as(list(
-                        Projections.constructor(ActVo.class,
-                                actionHistory.actionType,
-                                actionHistory.actionTarget,
-                                actionHistory.actionCount,
-                                actionHistory.actionValue,
-                                // ActVo의 timeSlot 필드는 ActionHistory 엔티티에 없으므로
-                                // 여기서는 매핑에서 제외하거나, 엔티티에 추가해야 합니다.
-                                // 우선 null로 채우기 위해 Expressions.nullExpression() 사용 가능
-                                Expressions.nullExpression(TimeSlot.class)
-                        )
-                )));
+                .innerJoin(userLastAction).on(actionHistory.userId.eq(userLastAction.userId).and(actionHistory.actionTime.after(LocalDateTime.now().minusDays(7))))
+                .where(actionHistory.actionTime.between(LocalDateTime.now().minusDays(7), LocalDateTime.now()))
+//                .limit(1000)
+                .fetch();
 
-        return transform.entrySet().stream()
+        // 2. Java Stream API를 사용하여 메모리에서 그룹화 및 변환 작업을 수행합니다.
+        Map<Long, List<ActVo>> groupedByUserId = results.stream()
+                .collect(Collectors.groupingBy(
+                        tuple -> tuple.get(actionHistory.userId), // userId로 그룹화
+                        Collectors.mapping(
+                                tuple -> new ActVo( // 각 Tuple을 ActVo 객체로 매핑
+                                        tuple.get(actionHistory.actionType),
+                                        tuple.get(actionHistory.actionTarget),
+                                        tuple.get(actionHistory.actionCount),
+                                        tuple.get(actionHistory.actionValue),
+                                        tuple.get(actionHistory.actionTime)
+                                ),
+                                Collectors.toList() // ActVo 객체들을 리스트로 수집
+                        )
+                ));
+
+        // 3. 그룹화된 맵을 최종 결과 형태인 List<ActiveUserVo>로 변환합니다.
+        return groupedByUserId.entrySet().stream()
                 .map(entry -> {
                     ActiveUserVo vo = new ActiveUserVo();
                     vo.setUserId(entry.getKey());
@@ -51,6 +70,7 @@ public class BehaviorTimeFilterRepository {
                 })
                 .collect(Collectors.toList());
     }
+
 
 
 }
