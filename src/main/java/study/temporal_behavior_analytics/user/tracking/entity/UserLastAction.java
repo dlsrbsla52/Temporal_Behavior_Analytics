@@ -17,7 +17,6 @@ public class UserLastAction {
     @OneToMany(mappedBy = "userLastAction")
     private List<ActionHistory> actionHistoryList;
     
-    
     @Column(name = "last_action_time")
     private LocalDateTime lastActionTime;
 }

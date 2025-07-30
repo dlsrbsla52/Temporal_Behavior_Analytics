@@ -8,6 +8,9 @@
    3. Security는 별도로 구현하지 않음
 3. DB : postgresql
     1. docker를 통한 테스트 환경 구현 `docker-compose.yml` 참조
+4. 실제 데이터를 활용하는 로직을 테스트시
+   1. `test.java.study.temporal_behavior_analytics.data.DataInitializer.java` 클래스 이용
+   2. 
 
 # DB 설정
 ## 테이블 생성

@@ -28,6 +28,7 @@ spring:
         default_batch_fetch_size: 1000
         generate_statistics: true
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
       order_inserts: true
       order_updates: true
       jdbc:

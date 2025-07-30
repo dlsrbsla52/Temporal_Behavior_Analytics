@@ -35,15 +35,27 @@ public class DataInitializer {
     @Autowired
     private SnowflakeIdGenerator snowflakeIdGenerator;
 
+
     // ================== 데이터 생성 규칙 상수 ==================
     private static final int USER_COUNT = 3_000_000;
-    private static final int THREAD_COUNT = 20; // 실행 환경에 따라 조절
-    private static final int EXECUTE_COUNT = 200_000; // action_history 생성을 위한 외부 루프 횟수
-    private static final int BULK_INSERT_SIZE = 2_000; // 한 번의 배치로 삽입할 레코드 수
-    // 총 ActionHistory 레코드 수 = EXECUTE_COUNT * BULK_INSERT_SIZE = 4억
 
+    // 실행 환경에 따라 조절
+    private static final int THREAD_COUNT = 20;
+
+    // action_history 생성을 위한 외부 루프 횟수
+    private static final int EXECUTE_COUNT = 200_000;
+    
+    // 한 번의 배치로 삽입할 레코드 수
+    // 총 ActionHistory 레코드 수 = EXECUTE_COUNT * BULK_INSERT_SIZE = 4억
+    // 문제에서 약 4억개의 튜플 수를 가지고 있다고 가정 했기 때문에 최대 입력 튜플을 4억으로 처리
+    private static final int BULK_INSERT_SIZE = 2_000;
+
+    // 임의의 actionType 정의
     private static final List<String> ACTION_TYPES = List.of("VIEW", "CLICK", "VOTE");
+
+    // 임의의 actionTarget 정의
     private static final List<String> ACTION_TARGETS = List.of("vote", "product_1", "product_2", "product_3");
+
 
 
     /**
