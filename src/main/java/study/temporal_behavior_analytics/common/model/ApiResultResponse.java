@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
-import study.temporal_behavior_analytics.common.code.ServerCode;
+import study.temporal_behavior_analytics.common.type.ServerCode;
 
 @Getter
 @ToString

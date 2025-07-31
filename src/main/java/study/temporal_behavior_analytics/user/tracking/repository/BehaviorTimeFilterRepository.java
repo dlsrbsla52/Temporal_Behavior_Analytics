@@ -62,7 +62,7 @@ public class BehaviorTimeFilterRepository {
      * @param period 조회 시작 시간
      * @return 시간대별 통계 데이터 리스트
      */
-    public List<TimeSlotStatVo> findTimeSlotActionStats(LocalDateTime start, LocalDateTime end, String period) {
+    public List<TimeSlotStatVo> findTimeSlotActionStats(LocalDateTime start, LocalDateTime end) {
         // CASE WHEN 구문 정의
         StringTemplate timeSlot = Expressions.stringTemplate(
                 "CASE " +
@@ -81,9 +81,7 @@ public class BehaviorTimeFilterRepository {
                         actionHistory.userId.countDistinct()
                 ))
                 .from(actionHistory)
-                .where(actionHistory.actionTime.between(start, end)
-                        .and(actionHistory.actionType.eq(period))
-                )
+                .where(actionHistory.actionTime.between(start, end))
                 .groupBy(timeSlot, actionHistory.actionType) // 집계 조건
                 .orderBy(timeSlot.asc(),
                         actionHistory.actionType.asc()

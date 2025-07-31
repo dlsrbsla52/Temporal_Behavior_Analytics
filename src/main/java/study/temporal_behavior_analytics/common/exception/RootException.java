@@ -1,7 +1,7 @@
 package study.temporal_behavior_analytics.common.exception;
 
 import lombok.Getter;
-import study.temporal_behavior_analytics.common.code.ServerCode;
+import study.temporal_behavior_analytics.common.type.ServerCode;
 
 public abstract class RootException extends RuntimeException{
 

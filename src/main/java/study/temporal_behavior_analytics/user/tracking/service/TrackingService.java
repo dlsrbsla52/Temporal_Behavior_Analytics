@@ -9,7 +9,18 @@ import java.util.List;
 public interface TrackingService {
 
 
-    ApiResultResponse<List<DailyStatVo>> getWeeklyStats(String period);
-    ApiResultResponse<List<TimeSlotStatVo>> getTimeSlotStats(String period);
-    ApiResultResponse<Long> countVoteUsers();
+    /**
+     * @return
+     */
+    List<DailyStatVo> getWeeklyStats();
+
+    /**
+     * @return
+     */
+    List<TimeSlotStatVo> getTimeSlotStats();
+
+    /**
+     * @return
+     */
+    Long countVoteUsers();
 }

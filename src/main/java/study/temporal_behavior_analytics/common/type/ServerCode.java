@@ -1,4 +1,4 @@
-package study.temporal_behavior_analytics.common.code;
+package study.temporal_behavior_analytics.common.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

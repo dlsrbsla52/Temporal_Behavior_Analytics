@@ -17,8 +17,9 @@ public class SnowflakeIdGenerator implements IdentifierGenerator {
 
     /**
      * 새로운 ID 할당
-     * Hibernate 세션과 관계없이 새로운 Snowflake ID를 생성하여 반환.
-     * JdbcTemplate 등 외부에서 ID가 필요할 때 이 메서드를 직접 호출 해야한다.
+     * Hibernate 세션과 관계없이 새로운 Snowflake ID를 생성하여 반환
+     * JdbcTemplate 등 외부에서 ID가 필요할 때 이 메서드를 직접 호출
+     *
      * @return 생성된 Long 타입의 ID
      */
     public long nextId() {
@@ -26,9 +27,10 @@ public class SnowflakeIdGenerator implements IdentifierGenerator {
     }
 
     /**
-     * 새로운 ID 할당 JAP Entity가 호출될 때 사용한다.
+     * 새로운 ID 할당 JAP Entity가 호출될 때 사용
      * @param session 현재 세션
      * @param object ID가 필요한 엔티티 객체
+     *
      * @return 생성된 Long 타입의 ID
      */
     @Override

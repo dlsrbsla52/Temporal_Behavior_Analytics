@@ -13,6 +13,11 @@ public class SwaggerConfig {
 
     private static final String BEARER_TOKEN_PREFIX = "Bearer";
 
+    /**
+     * OpenAPI Swagger Config
+     * 
+     * @return OpenAPI
+     */
     @Bean
     @Profile("!Prod")
     public OpenAPI openAPI() {

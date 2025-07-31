@@ -23,23 +23,21 @@ public class TrackingController {
     @Operation(summary = "요일별 사용자 행동 통계", description = "최근 1주일 또는 6개월 평균 요일별 통계를 제공합니다.")
     @GetMapping("/activeUsers/wau")
     public ApiResultResponse<List<DailyStatVo>> getWeeklyStats(
-            @RequestParam(name = "period", defaultValue = "last_week") String period // last_week, last_6_months_avg
     ) {
-        return trackingService.getWeeklyStats(period);
+        return ApiResultResponse.success(trackingService.getWeeklyStats());
     }
 
     @Operation(summary = "시간대별 사용자 행동 통계", description = "어제 하루 또는 6개월 평균 시간대별 통계를 제공합니다.")
     @GetMapping("/activeUsers/wau/timeslot")
     public ApiResultResponse<List<TimeSlotStatVo>> getTimeSlotStats(
-            @RequestParam(name = "period", defaultValue = "", required = false) String period // yesterday, last_6_months_avg
     ) {
-        return trackingService.getTimeSlotStats(period);
+        return ApiResultResponse.success(trackingService.getTimeSlotStats());
     }
 
     @Operation(summary = "특정 타겟('vote') 액션 사용자 수", description = "최근 6개월 내 'vote' 액션을 하고, 최근 3개월 내 활동한 사용자 수를 반환합니다.")
     @GetMapping("/active-voters/count")
     public ApiResultResponse<Long> getActiveVoterCount() {
-        return trackingService.countVoteUsers();
+        return ApiResultResponse.success(trackingService.countVoteUsers());
     }
     
 }

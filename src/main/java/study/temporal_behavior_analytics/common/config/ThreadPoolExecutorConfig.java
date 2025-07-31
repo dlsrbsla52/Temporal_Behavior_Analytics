@@ -11,28 +11,28 @@ import java.util.concurrent.Executors;
 @Configuration
 public class ThreadPoolExecutorConfig {
 
+    /**
+     * 비동기 처리될 때 사용하는 Thread Executor
+     *
+     * @return Executor ThreadPoolTaskExecutor()
+     */
     @Bean
-    public Executor pushCompletedExecutor() {
+    public Executor asycnExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(20);
+        executor.setMaxPoolSize(100);
         executor.setThreadNamePrefix("pushCompletedExecutor-");
         executor.setTaskDecorator(new MDCCopyTaskDecorator());
         return executor;
     }
 
+    /**
+     * 버츄얼 쓰레드를 사용하는 Thread Executor
+     *
+     * @return Executor VirtualThreadPerTaskExecutor()
+     */
     @Bean
-    public Executor loggingExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("LoggingExecutor-");
-        executor.setTaskDecorator(new MDCCopyTaskDecorator());
-        return executor;
-    }
-
-    @Bean
-    public Executor pushSendExecutor() {
+    public Executor vrThreadExecutor() {
         TaskExecutorAdapter adapter = new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
         adapter.setTaskDecorator(new MDCCopyTaskDecorator());
         return adapter;
