@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import study.temporal_behavior_analytics.user.tracking.vo.DailyStatVo;
 import study.temporal_behavior_analytics.user.tracking.vo.QDailyStatVo;
-import study.temporal_behavior_analytics.user.tracking.vo.QTimeSlotStatVo;
-import study.temporal_behavior_analytics.user.tracking.vo.TimeSlotStatVo;
+import study.temporal_behavior_analytics.user.tracking.vo.QTimeSlotVo;
+import study.temporal_behavior_analytics.user.tracking.vo.TimeSlotVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -59,10 +59,9 @@ public class BehaviorTimeFilterRepository {
      *
      * @param end 조회 종료 시간
      * @param start 조회 시작 시간
-     * @param period 조회 시작 시간
      * @return 시간대별 통계 데이터 리스트
      */
-    public List<TimeSlotStatVo> findTimeSlotActionStats(LocalDateTime start, LocalDateTime end) {
+    public List<TimeSlotVo> findTimeSlotActionStats(LocalDateTime start, LocalDateTime end) {
         // CASE WHEN 구문 정의
         StringTemplate timeSlot = Expressions.stringTemplate(
                 "CASE " +
@@ -74,7 +73,7 @@ public class BehaviorTimeFilterRepository {
         );
 
         return jpaQueryFactory
-                .select(new QTimeSlotStatVo(
+                .select(new QTimeSlotVo(
                         timeSlot, // CASE WHEN 구문 사용
                         actionHistory.actionType,
                         actionHistory.actionCount.sum().coalesce(0),

@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class TimeSlotStatVo {
+public class TimeSlotVo {
 
     private String timeSlot; // 시간대 (예: "새벽", "오전")
     private String actionType; // 행동 타입
@@ -14,7 +14,7 @@ public class TimeSlotStatVo {
     private long uniqueUserCount; // 고유 사용자 수
 
     @QueryProjection // QueryDSL 조회 결과를 이 생성자에 직접 매핑
-    public TimeSlotStatVo(String timeSlot, String actionType, int totalActionCount, long uniqueUserCount) {
+    public TimeSlotVo(String timeSlot, String actionType, int totalActionCount, long uniqueUserCount) {
         this.timeSlot = timeSlot;
         this.actionType = actionType;
         this.totalActionCount = totalActionCount;

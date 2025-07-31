@@ -1,9 +1,9 @@
 package study.temporal_behavior_analytics.user.tracking.service;
 
-import study.temporal_behavior_analytics.common.model.ApiResultResponse;
 import study.temporal_behavior_analytics.user.tracking.vo.DailyStatVo;
-import study.temporal_behavior_analytics.user.tracking.vo.TimeSlotStatVo;
+import study.temporal_behavior_analytics.user.tracking.vo.TimeSlotVo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TrackingService {
@@ -12,12 +12,12 @@ public interface TrackingService {
     /**
      * @return
      */
-    List<DailyStatVo> getWeeklyStats();
+    List<DailyStatVo> getStats(LocalDateTime startDate, LocalDateTime endDate);
 
     /**
      * @return
      */
-    List<TimeSlotStatVo> getTimeSlotStats();
+    List<TimeSlotVo> getTimeSlotStats(LocalDateTime startDate, LocalDateTime endDate);
 
     /**
      * @return
